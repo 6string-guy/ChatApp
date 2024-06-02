@@ -47,13 +47,13 @@ const Signup = () => {
     console.log(name, email, password, pic);
     try {
       const config = {
-        method: "GET",
+        method: "POST",
         headers: {
           "Content-type": "application/json",
         },
       };
       const { data } = await axios.post(
-        "localhost:8000/api/user",
+        "http://localhost:8000/api/user/",
         {
           name,
           email,
