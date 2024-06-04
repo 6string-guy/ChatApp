@@ -1,9 +1,8 @@
 import express from 'express'
-import chats from './data/data.js'
 import { config as configDotenv } from 'dotenv';
 import connectDB from './config/db.js';
-import  userRoutes from './routes/userRoutes.js'
-import User from './models/userModel.js';
+import userRoutes from './routes/userRoutes.js'
+import chatRoutes from './routes/chatRoutes.js'
 import cors from 'cors'
 const app = express();
 app.use(express.json());
@@ -16,7 +15,8 @@ app.use(
 );
 configDotenv();
 connectDB();
-app.use("/api/user", userRoutes);
+app.use("/api/user", userRoutes); 
+app.use('/api/chat', chatRoutes);
  const PORT = process.env.PORT || 8000; 
 app.listen(PORT, console.log(`Chal rha hai ${PORT} par`));
 
