@@ -5,8 +5,8 @@ import { VStack } from "@chakra-ui/layout";
 import { useState } from "react";
 import axios from "axios";
 import { useToast } from "@chakra-ui/react";
-// import useHistory  from "react-router-dom";
-// import { ChatState } from "../../Context/ChatProvider"; // Commented out ChatState import
+import { useNavigate } from "react-router-dom";
+//import { ChatState } from "../../Context/ChatProvider"; // Uncommented ChatState import
 
 const Login = () => {
   const [show, setShow] = useState(false);
@@ -16,8 +16,8 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  //const history = useHistory();
-  // const { setUser } = ChatState(); // Commented out ChatState functionality
+  const navigate = useNavigate(); // Using useNavigate instead of useHistory
+  //const { setUser } = ChatState(); // Uncommented ChatState functionality
 
   const submitHandler = async () => {
     setLoading(true);
@@ -35,13 +35,14 @@ const Login = () => {
 
     try {
       const config = {
+        method:"GET",
         headers: {
           "Content-type": "application/json",
         },
       };
 
       const { data } = await axios.post(
-        "/api/user/login",
+        "http://localhost:8000/api/user/login",
         { email, password },
         config
       );
@@ -53,10 +54,10 @@ const Login = () => {
         isClosable: true,
         position: "bottom",
       });
-      // setUser(data); // Commented out setUser functionality
+     // setUser(data); // Uncommented setUser functionality
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
-     // history.push("/chats");
+      navigate("/chats"); // Using navigate instead of history.push
     } catch (error) {
       toast({
         title: "Error Occurred!",

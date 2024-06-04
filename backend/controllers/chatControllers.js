@@ -1,6 +1,6 @@
-import expressAsyncHandler from ("express-async-handler");
+import expressAsyncHandler from "express-async-handler";
 
-const accessChat = asyncHandler(async (req, res) => {
+const accessChat = expressAsyncHandler(async (req, res) => {
   const { userId } = req.body;
 
   if (!userId) {
@@ -90,7 +90,7 @@ const createGroupChat = expressAsyncHandler(async (req, res) => {
     throw new Error(error.message);
   }
 });
-const renameGroup = asyncHandler(async (req, res) => {
+const renameGroup = expressAsyncHandler(async (req, res) => {
   const { chatId, chatName } = req.body;
 
   const updatedChat = await Chat.findByIdAndUpdate(
@@ -112,7 +112,7 @@ const renameGroup = asyncHandler(async (req, res) => {
     res.json(updatedChat);
   }
 });
-const removeFromGroup = asyncHandler(async (req, res) => {
+const removeFromGroup = expressAsyncHandler(async (req, res) => {
   const { chatId, userId } = req.body;
 
   // check if the requester is admin
@@ -136,7 +136,7 @@ const removeFromGroup = asyncHandler(async (req, res) => {
     res.json(removed);
   }
 });
-const addToGroup = asyncHandler(async (req, res) => {
+const addToGroup = expressAsyncHandler(async (req, res) => {
   const { chatId, userId } = req.body;
 
   // check if the requester is admin

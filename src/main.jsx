@@ -8,6 +8,7 @@ import {
 import { ChakraProvider } from "@chakra-ui/react";
 import HomePage from "./Pages/HomePage";
 import ChatPage from "./Pages/ChatPage";
+import ChatProvider from "./Context/ChatProvider";
 
 const router = createBrowserRouter([
   {
@@ -17,13 +18,15 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/chats",
+    path: "/user/login",
     element:<ChatPage/>
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <ChakraProvider>
-    <RouterProvider router={router} />
-  </ChakraProvider>
+  <ChatProvider>
+    <ChakraProvider>
+      <RouterProvider router={router} />
+    </ChakraProvider>
+  </ChatProvider>
 );

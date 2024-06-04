@@ -72,7 +72,7 @@ const Signup = () => {
       });
       localStorage.setItem("userInfo", JSON.stringify(data));
       setPicLoading(false);
-      history.push("/chats");
+      useNavigate.push("/chats");
     } catch (error) {
       toast({
         title: "Error Occurred!",
