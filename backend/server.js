@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173",// Specify the origin(s) you want to allow
+    origin: "http://localhost:5173", // Specify the origin(s) you want to allow
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // Allow cookies to be sent with requests
   })

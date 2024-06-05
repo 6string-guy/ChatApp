@@ -11,7 +11,7 @@ import { protect } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 
-router.route('/').post(protect, accessChat);
+router.route('/').get(protect, accessChat);
 router.route('/').get(protect, fetchChats);
 router.route('/group').post(protect, createGroupChat);
 //because database is being updated we have put request
