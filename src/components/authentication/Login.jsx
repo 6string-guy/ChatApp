@@ -6,7 +6,8 @@ import { useState } from "react";
 import axios from "axios";
 import { useToast } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
-//import { ChatState } from "../../Context/ChatProvider"; // Uncommented ChatState import
+import { ChatState } from "../../Context/ChatProvider.jsx"; // Uncommented ChatState import
+import expressAsyncHandler from "express-async-handler";
 
 const Login = () => {
   const [show, setShow] = useState(false);
@@ -15,11 +16,11 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // Move useNavigate to the top
 
-  const navigate = useNavigate(); // Using useNavigate instead of useHistory
-  //const { setUser } = ChatState(); // Uncommented ChatState functionality
+  const { setUser } = ChatState(); // Uncomment and use ChatState
 
-  const submitHandler = async () => {
+  const submitHandler = expressAsyncHandler(async () => {
     setLoading(true);
     if (!email || !password) {
       toast({
@@ -34,8 +35,8 @@ const Login = () => {
     }
 
     try {
-      const config = {
-        method:"GET",
+      const config = await {
+        method: "POST", // Changed to POST as login should use POST method
         headers: {
           "Content-type": "application/json",
         },
@@ -54,7 +55,7 @@ const Login = () => {
         isClosable: true,
         position: "bottom",
       });
-     // setUser(data); // Uncommented setUser functionality
+      setUser(data); // Use setUser to update context
       localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
       navigate("/chats"); // Using navigate instead of history.push
@@ -69,7 +70,7 @@ const Login = () => {
       });
       setLoading(false);
     }
-  };
+  });
 
   return (
     <VStack spacing="10px">
@@ -112,8 +113,8 @@ const Login = () => {
         colorScheme="red"
         width="100%"
         onClick={() => {
-          setEmail("guest@example.com");
-          setPassword("123456");
+          setEmail("jgoj");
+          setPassword("chgc");
         }}
       >
         Get Guest User Credentials
