@@ -77,11 +77,11 @@ function SideDrawer() {
         config
       );
      console.log( data)
-      if (Array.isArray(data)) {
+      // if (Array.isArray(data)) {
        setSearchResult(data); // Ensure data is an array before setting
-     } else {
-       setSearchResult([]);
-     }
+    //  } else {
+    //    setSearchResult([]);
+    //  }
       setLoading(false);
     } catch (error) {
       toast({

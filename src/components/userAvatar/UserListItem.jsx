@@ -1,11 +1,8 @@
-import { Avatar } from "@chakra-ui/avatar";
+// UserListItem.js
 import React from "react";
-import { Box, Text } from "@chakra-ui/layout";
-import { ChatState } from "../../Context/ChatProvider";
+import { Box, Text, Avatar } from "@chakra-ui/react";
 
-const UserListItem = ({ handleFunction }) => {
-  const { user } = ChatState(); // Call ChatState as a function to get the user object
-
+const UserListItem = ({ user, handleFunction }) => {
   return (
     <Box
       onClick={handleFunction}
