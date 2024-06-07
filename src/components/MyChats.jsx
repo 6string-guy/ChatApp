@@ -19,6 +19,7 @@ function MyChats() {
   } = ChatState();
   const [loggedUser, setLoggedUser] = useState();
   const toast = useToast();
+  console.log( user)
 const fetchChats = async () => {
   try {
     const url = `http://localhost:8000/api/chat`;
