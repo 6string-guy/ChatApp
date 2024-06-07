@@ -1,10 +1,12 @@
 import expressAsyncHandler from "express-async-handler";
-
+import Chat from "../models/chatModel.js"
+import User from "../models/userModel.js"
 const accessChat = expressAsyncHandler(async (req, res) => {
   const { userId } = req.body;
+  console.log(req)
 
   if (!userId) {
-    console.log("UserId param not sent with request");
+    console.log("userId param not sent with request");
     return res.sendStatus(400);
   }
 
@@ -54,6 +56,7 @@ const fetchChats = expressAsyncHandler(async (req, res) => {
     }
     catch (error)
     {
+      console.log(req)
         res.status( 400)
         throw new Error(error.message);
 
