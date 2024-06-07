@@ -2,9 +2,9 @@ import expressAsyncHandler from "express-async-handler";
 import Chat from "../models/chatModel.js"
 import User from "../models/userModel.js"
 const accessChat = expressAsyncHandler(async (req, res) => {
-  const  userId  = req.body._id;
-  console.log(req)
-  console.log( userId)
+  const  userId  = req.user._id;
+  //console.log(req)
+  console.log( req)
   if (!userId) {
     console.log("userId param not sent with request");
     return res.sendStatus(400);
