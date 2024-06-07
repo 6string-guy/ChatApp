@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Stack, useToast } from "@chakra-ui/react";
 import { ChatState } from "../Context/ChatProvider";
-import { Box } from "@chakra-ui/react";
+import { Box , Text} from "@chakra-ui/react";
 import axios from "axios";
 import { AddIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
@@ -9,8 +9,8 @@ import { getSender } from "./config/ChatLogics";
 
 function MyChats() {
   const {
-    setSelectedChat,
-    selectedChat,
+    setSelectedChats,
+    selectedChats,
     user,
     notification,
     setNotification,
@@ -20,7 +20,8 @@ function MyChats() {
   const [loggedUser, setLoggedUser] = useState();
   const toast = useToast();
   console.log( user)
-const fetchChats = async () => {
+  const fetchChats = async () => {
+  console.log ( user.token)
   try {
     const url = `http://localhost:8000/api/chat`;
     const headers = {
@@ -54,9 +55,10 @@ const fetchChats = async () => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
   }, []);
+  console.log( chats)
   return (
     <Box
-      display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
+      display={{ base: selectedChats ? "none" : "flex", md: "flex" }}
       flexDir="column"
       alignItems="center"
       p={3}
@@ -96,12 +98,12 @@ const fetchChats = async () => {
       >
         {chats ? (
           <Stack overflowY="scroll">
-            {chats.map((chat) => {
+            {chats.map((chat) => (
               <Box
-                onClick={() => setSelectedChat(chat)}
+                onClick={() => setSelectedChats(chat)}
                 cursor="pointer"
-                bg={selectedChat === chat ? "#38B2AC" : "#E8E8E8"}
-                color={selectedChat === chat ? "white" : "black"}
+                bg={selectedChats === chat ? "#38B2AC" : "#E8E8E8"}
+                color={selectedChats === chat ? "white" : "black"}
                 px={3}
                 py={2}
                 borderRadius="lg"
@@ -118,19 +120,14 @@ const fetchChats = async () => {
                     {chat.latestMessage.content.length > 50
                       ? chat.latestMessage.content.substring(0, 51) + "..."
                       : chat.latestMessage.content}
-                  </Text>)}
-                
-              </Box>;
-            })}
-            
-        </Stack>
-        ):(
-        
-          <ChatLoading/>
-        
-      )}
-
-
+                  </Text>
+                )}
+              </Box>
+            ))}
+          </Stack>
+        ) : (
+          <ChatLoading />
+        )}
       </Box>
     </Box>
   );

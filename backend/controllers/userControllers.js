@@ -24,12 +24,14 @@ const registerUser = expressAsyncHandler(
         );
         if (user)
         {
+                console.log(user.token);
+
             res.status(201).json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
                 pic: user.pic,
-                token:generateToken(user._id),
+                token: generateToken(user._id),
             })
         }
         else

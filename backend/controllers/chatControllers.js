@@ -2,7 +2,7 @@ import expressAsyncHandler from "express-async-handler";
 import Chat from "../models/chatModel.js"
 import User from "../models/userModel.js"
 const accessChat = expressAsyncHandler(async (req, res) => {
-  const  userId  = req.user._id;
+  const { userId }  = req.body;
   //console.log(req)
   console.log( req)
   if (!userId) {
@@ -49,18 +49,18 @@ const accessChat = expressAsyncHandler(async (req, res) => {
 });
 const fetchChats = expressAsyncHandler(async (req, res) => {
     try {
-       await Chat.find({ users: { $eleMatch: { $eq: req.user._id } } })
-            .populate("users", "-password")
-            .populate("groupAdmin", "-password")
-            .populate("latestMessage");
-    }
-    catch (error)
-    {
-      console.log(req)
-        res.status( 400)
-        throw new Error(error.message);
+      const chats = await Chat.find({ users: req.user._id })
+        .populate("users", "-password")
+        .populate("groupAdmin", "-password")
+        .populate("latestMessage");
 
+      res.json(chats);
+    } catch (error) {
+      console.error(error);
+      res.status(400);
+      throw new Error(error.message);
     }
+
 })
 const createGroupChat = expressAsyncHandler(async (req, res) => {
     if (!req.body.users || !req.body.users)
