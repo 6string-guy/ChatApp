@@ -2,9 +2,9 @@ import expressAsyncHandler from "express-async-handler";
 import Chat from "../models/chatModel.js"
 import User from "../models/userModel.js"
 const accessChat = expressAsyncHandler(async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req.body._id;
   console.log(req)
-
+  console.log( userId)
   if (!userId) {
     console.log("userId param not sent with request");
     return res.sendStatus(400);
@@ -49,7 +49,7 @@ const accessChat = expressAsyncHandler(async (req, res) => {
 });
 const fetchChats = expressAsyncHandler(async (req, res) => {
     try {
-        Chat.find({ users: { $eleMatch: { $eq: req.user._id } } })
+       await Chat.find({ users: { $eleMatch: { $eq: req.user._id } } })
             .populate("users", "-password")
             .populate("groupAdmin", "-password")
             .populate("latestMessage");

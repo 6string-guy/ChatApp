@@ -19,35 +19,36 @@ function MyChats() {
   } = ChatState();
   const [loggedUser, setLoggedUser] = useState();
   const toast = useToast();
-  const fetchChats = async () => {
-    try {
-      // const config = {
-      const url = `http://localhost:8000/api/chat`;
-        headers= {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-          
-        },
-      
-        
-      //};
-      
-      console.log(`Accessing chat with user ID: ${user._id}`); // Debug statement
+const fetchChats = async () => {
+  try {
+    const url = `http://localhost:8000/api/chat`;
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${user.token}`, // Ensure user and token are defined
+    };
 
-      const { data } = await fetch(url, {
-        method: "GET",
-        headers: headers,
-      });
-      console.log(data);
-      setChats(data);
-    } catch (error) {
-      toast({
-        title: "Error Occured!",
-        description: "Failed to Load Chats",
-        status: "error",
-      });
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch chats");
     }
-  };
+
+    const data = await response.json(); // Extract JSON data from the response
+    console.log(data);
+    setChats(data);
+  } catch (error) {
+    console.error(error);
+    toast({
+      title: "Error Occurred!",
+      description: "Failed to Load Chats",
+      status: "error",
+    });
+  }
+};
+
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
