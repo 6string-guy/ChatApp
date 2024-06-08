@@ -1,4 +1,3 @@
-// UserListItem.js
 import React from "react";
 import { Box, Text, Avatar } from "@chakra-ui/react";
 

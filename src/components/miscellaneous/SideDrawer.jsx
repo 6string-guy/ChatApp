@@ -43,7 +43,8 @@ function SideDrawer() {
     navigate("/");
   };
 
- const {
+  const {
+   selectedChat,
    setSelectedChat,
    user,
    notification,
@@ -96,7 +97,10 @@ function SideDrawer() {
     }
   };
   const accessChat = async (userId) => {
-      console.log(userId);
+    console.log(userId);
+    console.log(`selected chat is ${selectedChat}`)
+    setSelectedChat(userId)
+    
 
     try {
       setLoading(true);
