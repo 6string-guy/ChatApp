@@ -5,11 +5,11 @@ import { Box , Text} from "@chakra-ui/react";
 import axios from "axios";
 import { AddIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
-import { getSender } from "./config/ChatLogics";
+import { getSender } from "./config/ChatLogics.js";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
 
 
-function MyChats() {
+function MyChats({fetchAgain}) {
   const {
     setSelectedChats,
     selectedChats,
@@ -56,7 +56,7 @@ function MyChats() {
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
-  }, []);
+  }, [fetchAgain]);
   console.log( chats)
   return (
     <Box
