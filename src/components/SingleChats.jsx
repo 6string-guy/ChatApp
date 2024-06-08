@@ -13,7 +13,7 @@ import ProfileModal from "./miscellaneous/ProfileModal";
 //import animationData from "../animations/typing.json";
 
 //import io from "socket.io-client";
-//import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
+import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal.jsx";
 import { ChatState } from "../Context/ChatProvider";
 
 
