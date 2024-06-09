@@ -1,7 +1,6 @@
 import { FormControl } from "@chakra-ui/form-control";
 import { Input } from "@chakra-ui/input";
 import { Box, Text } from "@chakra-ui/layout";
-//import "./styles.css";
 import { IconButton, Spinner, useToast } from "@chakra-ui/react";
 import { getSender, getSenderFull } from "./config/ChatLogics.js";
 import { useEffect, useState } from "react";
@@ -37,12 +36,77 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     chats,
     setChats,
   } = ChatState();
-  const sendMessage = () => {
+  const sendMessage = async (e) => {
+    if (e.key === 'Enter' && newMessage)
+    {
+        setNewMessage("");
+
+      try {
+        const config = {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization:`Bearer ${user.token}`
+          }
+        }
+        const { data } = await axios.post(
+          "http://localhost:8000/api/message",
+          {
+            content: newMessage,
+            chatId: selectedChats._id,
+          },
+          config
+        );
+        console.log( data)
+        setMessages([...messages, data])
+        
+      } catch (error) {
+        toast({
+          title: "Error Occurred!",
+          description: "Failed to Send the Message",
+          status: "error",
+          duration: 5000, 
+          isClosable:true
+        });
+        setLoading(false)
+        
+      }
+      }
     
   }
-  const fetchMessages = () => {
+  const fetchMessages = async () => {
+    if (!selectedChats)
+      return
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+      setLoading( true)
+      const { data } = await axios.get(
+        `http://localhost:8000/api/message/${selectedChats._id}`,
+        config
+      );
+      console.log( messages)
+      setMessages(data)
+      setLoading(false);
+      
+    } catch (error) {
+      toast({
+        title: "Error Occurred!",
+        description: "Failed to Load Messages",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+
     
   }
+  useEffect(() => {
+    fetchMessages();
+  }, [selectedChats])
+  
   const typingHandler = (e) => {
     setNewMessage(e.target.value)
     
@@ -109,7 +173,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 />
               ) : (
                 <div className="messages">
-                  Messages
+                  
                   {/* <ScrollableChat messages={messages} /> */}
                 </div>
               )}
