@@ -44,8 +44,8 @@ function SideDrawer() {
   };
 
   const {
-   selectedChat,
-   setSelectedChat,
+   selectedChats,
+   setSelectedChats,
    user,
    notification,
    setNotification,
@@ -98,8 +98,8 @@ function SideDrawer() {
   };
   const accessChat = async (userId) => {
     console.log(userId);
-    console.log(`selected chat is ${selectedChat}`)
-    setSelectedChat(userId)
+    console.log(`selected chat is ${selectedChats}`)
+    setSelectedChats(userId)
     
 
     try {
@@ -117,7 +117,7 @@ function SideDrawer() {
       );
 
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
-      setSelectedChat(data);
+      setSelectedChats(data);
       setLoading(false);
       onClose();
     } catch (error) {

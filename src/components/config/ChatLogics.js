@@ -43,5 +43,6 @@ export const getSender = (loggedUser, users) => {
 };
 
 export const getSenderFull = (loggedUser, users) => {
+  if( typeof(users)!=undefined)
   return users[0]._id === loggedUser._id ? users[1] : users[0];
 };
