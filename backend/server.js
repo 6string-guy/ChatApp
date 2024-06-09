@@ -4,6 +4,7 @@ import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js'
 import chatRoutes from './routes/chatRoutes.js'
 import messageRoutes from './routes/messageRoutes.js'
+import io from 'socket.io'
 import cors from 'cors'
 const app = express();
 app.use(express.json());
@@ -20,6 +21,19 @@ app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
  const PORT = process.env.PORT || 8000; 
-app.listen(PORT, console.log(`Chal rha hai ${PORT} par`));
+const server=app.listen(PORT, console.log(`Chal rha hai ${PORT} par`));
+
+const io =
+  (server,
+  
+  {
+    pingTimeout:60000,
+    cors: {
+      origin: "http://localhost:5173",
+    },
+  });
+io.on('connection', (socket) => {
+    console.log('connected to socket.io')
+  })
 
 

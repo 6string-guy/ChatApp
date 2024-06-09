@@ -14,6 +14,7 @@ import ProfileModal from "./miscellaneous/ProfileModal";
 //import io from "socket.io-client";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal.jsx";
 import { ChatState } from "../Context/ChatProvider";
+import ScrollableChats from "./ScrollableChats.jsx";
 
 
 
@@ -174,7 +175,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               ) : (
                 <div className="messages">
                   
-                  {/* <ScrollableChat messages={messages} /> */}
+                  { <ScrollableChats messages={messages} /> }
                 </div>
               )}
 
