@@ -94,6 +94,7 @@ const createGroupChat = expressAsyncHandler(async (req, res) => {
   }
 });
 const renameGroup = expressAsyncHandler(async (req, res) => {
+  console.log( req)
   const { chatId, chatName } = req.body;
 
   const updatedChat = await Chat.findByIdAndUpdate(
