@@ -37,7 +37,7 @@ const HomePage = () => {
         textAlign="center"
       >
         <Text fontSize="4xl" fontFamily="Work sans">
-          Chat App
+          Chat Box
         </Text>
       </Box>
       <Box bg="white" w="100%" p={4} borderRadius="lg" borderWidth="1px">
