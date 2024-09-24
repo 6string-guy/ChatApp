@@ -16,14 +16,14 @@ connectDB();
 // Initialize express app
 const app = express();
 app.use(express.json());
-app.use(
-  cors({
-    origin: "https://chat-an2nuwdfm-sanskar-jaiswals-projects-06532aba.vercel.app",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-  })
-);
-
+// app.use(
+//   cors({
+//     origin: "*",
+//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//     credentials: true,
+//   })
+// );
+app.use(cors())
 // Routes
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
@@ -37,19 +37,49 @@ const server = app.listen(PORT, () => {
 
 // Initialize socket.io
 const io = new Server(server, {
-  pingTimeout: 60000,
+  pingTimeout: 6000,
   cors: {
-    origin: "https://chat-an2nuwdfm-sanskar-jaiswals-projects-06532aba.vercel.app",
+    origin: "http://localhost:5173",
   },
 });
 
 io.on("connection", (socket) => {
   console.log("Connected to socket.io");
 
-  // Add your socket.io event handlers here
-
-  // Example: disconnect event
-  socket.on("disconnect", () => {
-    console.log("Disconnected from socket.io");
+  socket.on("setup", (userData) => {
+    socket.join(userData._id);
+    socket.emit("connected");
   });
+
+  socket.on("join chat", (room) => {
+    socket.join(room);
+    console.log("User Joined Room: " + room);
+  });
+
+  socket.on("typing", (room) => socket.in(room).emit("typing"));
+  socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+
+  socket.on("new message", (newMessageReceived) => {
+    console.log(newMessageReceived);
+    const  chat  = newMessageReceived.chat;
+     console.log( chat)
+    if (!chat.users)
+      return console.log("chat.users not defined");
+
+    chat.users.forEach((user) => {
+      if (user._id === newMessageReceived.sender._id) return;
+
+      socket.in(user._id).emit("message received", newMessageReceived);
+    });
+  });
+
+  socket.on("disconnect", () => {
+    console.log("USER DISCONNECTED");
+  });
+});
+
+// Optional: Add a global error handler middleware for express
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
 });
