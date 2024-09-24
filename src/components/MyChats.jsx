@@ -25,7 +25,7 @@ function MyChats({fetchAgain}) {
   const fetchChats = async () => {
   console.log ( user.token)
   try {
-    const url = `https://chatapp-xi08.onrender.com/api/chat`;
+    const url = `https://chatapp-0eao.onrender.com/api/chat`;
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${user.token}`, // Ensure user and token are defined

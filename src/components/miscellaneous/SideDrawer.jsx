@@ -74,7 +74,7 @@ function SideDrawer() {
         },
       };
       const { data } = await axios.get(
-        `https://chatapp-xi08.onrender.com/api/user?search=${search}`,
+        `https://chatapp-0eao.onrender.com/api/user?search=${search}`,
         config
       );
      console.log( data)
@@ -111,7 +111,7 @@ function SideDrawer() {
         },
       };
       const { data } = await axios.post(
-        `https://chatapp-xi08.onrender.com/api/chat`,
+        `https://chatapp-0eao.onrender.com/api/chat`,
         { userId },
         config
       );

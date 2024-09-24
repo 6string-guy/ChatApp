@@ -14,7 +14,7 @@ import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal.jsx";
 import { ChatState } from "../Context/ChatProvider";
 import ScrollableChats from "./ScrollableChats.jsx";
 
-const ENDPOINT = "https://chatapp-xi08.onrender.com";
+const ENDPOINT = "https://chatapp-0eao.onrender.com";
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
@@ -54,7 +54,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           }
         }
         const { data } = await axios.post(
-          "https://chatapp-xi08.onrender.com/api/message",
+          "https://chatapp-0eao.onrender.com/api/message",
           {
             content: newMessage,
             chatId: selectedChats._id,
@@ -89,7 +89,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       };
       setLoading( true)
       const { data } = await axios.get(
-        `https://chatapp-xi08.onrender.com/api/message/${selectedChats._id}`,
+        `https://chatapp-0eao.onrender.com/api/message/${selectedChats._id}`,
         config
       );
       console.log( messages)
