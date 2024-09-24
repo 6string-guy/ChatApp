@@ -47,7 +47,7 @@ function UpdateGroupChatModal() {
         },
       };
       const { data } = await axios.get(
-        `http://localhost:8000/api/user?search=${search}`,
+        `https://chatapp-xi08.onrender.com/api/user?search=${search}`,
         config
       );
       console.log(data);
@@ -77,7 +77,7 @@ function UpdateGroupChatModal() {
         },
       };
       const { data } = await axios.put(
-        `http://localhost:8000/api/chat/rename`,
+        `https://chatapp-xi08.onrender.com/api/chat/rename`,
         {
           chatId: selectedChats._id,
           chatName: groupChatName,
@@ -136,7 +136,7 @@ function UpdateGroupChatModal() {
         },
       };
       const { data } = await axios.put(
-        `http://localhost:8000/api/chat/groupadd`,
+        `https://chatapp-xi08.onrender.com/api/chat/groupadd`,
         {
           chatId: selectedChats._id,
           userId: user1._id,
@@ -181,7 +181,7 @@ function UpdateGroupChatModal() {
         },
       };
       const { data } = await axios.put(
-        `http://localhost:8000/api/chat/groupremove`,
+        `https://chatapp-xi08.onrender.com/api/chat/groupremove`,
         {
           chatId: selectedChats._id,
           userId: user1._id,
