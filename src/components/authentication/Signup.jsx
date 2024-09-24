@@ -53,7 +53,7 @@ const Signup = () => {
         },
       };
       const { data } = await axios.post(
-        "http://localhost:8000/api/user/",
+        "https://chatapp-xi08.onrender.com/api/user/",
         {
           name,
           email,
