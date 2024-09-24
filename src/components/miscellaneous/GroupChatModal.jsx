@@ -52,7 +52,7 @@ function GroupChatModal({ children }) {
         },
       };
       const { data } = await axios.get(
-        `http://localhost:8000/api/user?search=${search}`,
+        `https://chatapp-xi08.onrender.com/api/user?search=${search}`,
         config
       );
       console.log(data);
@@ -108,7 +108,7 @@ function GroupChatModal({ children }) {
         },
       };
       const { data } = await axios.post(
-        `http://localhost:8000/api/chat/group`,
+        `https://chatapp-xi08.onrender.com/api/chat/group`,
         {
           name: groupChatName,
           users: JSON.stringify(selectedUsers.map((u) => u._id)),
