@@ -1,93 +1,139 @@
 import React, { useEffect, useState } from "react";
+import { Button, Stack, useToast } from "@chakra-ui/react";
 import { ChatState } from "../Context/ChatProvider";
+import { Box , Text} from "@chakra-ui/react";
 import axios from "axios";
+import { AddIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
 import { getSender } from "./config/ChatLogics.js";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
-import { AddIcon } from "@chakra-ui/icons"; // Optional: replace with a Tailwind-compatible icon
 
-function MyChats({ fetchAgain }) {
-  const { setSelectedChats, selectedChats, user, chats, setChats } =
-    ChatState();
+
+function MyChats({fetchAgain}) {
+  const {
+    setSelectedChats,
+    selectedChats,
+    user,
+    notification,
+    setNotification,
+    chats,
+    setChats,
+  } = ChatState();
   const [loggedUser, setLoggedUser] = useState();
-
+  const toast = useToast();
+  console.log( user)
   const fetchChats = async () => {
-    try {
-      const response = await fetch(
-        `https://chatapp-0eao.onrender.com/api/chat`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
+  console.log ( user.token)
+  try {
+    const url = `https://chatapp-0eao.onrender.com/api/chat`;
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${user.token}`, // Ensure user and token are defined
+    };
 
-      if (!response.ok) throw new Error("Failed to fetch chats");
+    const response = await fetch(url, {
+      method: "GET",
+      headers: headers,
+    });
 
-      const data = await response.json();
-      setChats(data);
-    } catch (error) {
-      console.error("Fetch chats failed", error);
+    if (!response.ok) {
+      throw new Error("Failed to fetch chats");
     }
-  };
+
+    const data = await response.json(); // Extract JSON data from the response
+    console.log(data);
+    setChats(data);
+  } catch (error) {
+    console.error(error);
+    toast({
+      title: "Error Occurred!",
+      description: "Failed to Load Chats",
+      status: "error",
+    });
+  }
+};
 
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChats();
   }, [fetchAgain]);
-
+  console.log( chats)
   return (
-    <div
-      className={`${
-        selectedChats ? "hidden" : "flex"
-      } md:flex flex-col items-center p-3 bg-white w-full md:w-[31%] rounded-lg border`}
+    <Box
+      display={{ base: selectedChats ? "none" : "flex", md: "flex" }}
+      flexDir="column"
+      alignItems="center"
+      p={3}
+      bg="white"
+      w={{ base: "100%", md: "31%" }}
+      borderRadius="lg"
+      borderWidth="1px"
     >
-      <div className="pb-3 px-3 text-[24px] md:text-[30px] font-sans w-full flex justify-between items-center">
-        <span>My Chats</span>
+      <Box
+        pb={3}
+        px={3}
+        fontSize={{ base: "24px", md: "30px" }}
+        fontFamily="Work sans"
+        display="flex"
+        w="100%"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        My Chats
         <GroupChatModal>
-          <button className="flex items-center text-[17px] md:text-[10px] lg:text-[17px] px-2 py-1 bg-gray-200 rounded">
-            <AddIcon className="mr-1" />
+          <Button
+            display="flex"
+            fontSize={{ base: "17px", md: "10px", lg: "17px" }}
+            rightIcon={<AddIcon />}
+          >
             New Group Chat
-          </button>
+          </Button>
         </GroupChatModal>
-      </div>
-
-      <div className="flex flex-col p-3 bg-gray-100 w-full h-full rounded-lg overflow-y-hidden">
+      </Box>
+      <Box
+        display="flex"
+        flexDir="column"
+        p={3}
+        bg="#F8F8F8"
+        w="100%"
+        h="100%"
+        borderRadius="lg"
+        overflowY="hidden"
+      >
         {chats ? (
-          <div className="overflow-y-scroll space-y-2">
+          <Stack overflowY="scroll">
             {chats.map((chat) => (
-              <div
-                key={chat._id}
+              <Box
                 onClick={() => setSelectedChats(chat)}
-                className={`cursor-pointer px-3 py-2 rounded-lg ${
-                  selectedChats === chat
-                    ? "bg-teal-500 text-white"
-                    : "bg-gray-200 text-black"
-                }`}
+                cursor="pointer"
+                bg={selectedChats === chat ? "#38B2AC" : "#E8E8E8"}
+                color={selectedChats === chat ? "white" : "black"}
+                px={3}
+                py={2}
+                borderRadius="lg"
+                key={chat._id}
               >
-                <div>
+                <Text>
                   {!chat.isGroupChat
                     ? getSender(loggedUser, chat.users)
                     : chat.chatName}
-                </div>
+                </Text>
                 {chat.latestMessage && (
-                  <div className="text-xs">
-                    <strong>{chat.latestMessage.sender.name}:</strong>{" "}
+                  <Text fontSize="xs">
+                    <b>{chat.latestMessage.sender.name} : </b>
                     {chat.latestMessage.content.length > 50
                       ? chat.latestMessage.content.substring(0, 51) + "..."
                       : chat.latestMessage.content}
-                  </div>
+                  </Text>
                 )}
-              </div>
+              </Box>
             ))}
-          </div>
+          </Stack>
         ) : (
           <ChatLoading />
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   );
 }
 
