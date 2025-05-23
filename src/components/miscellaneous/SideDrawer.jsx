@@ -1,30 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Box,
-  Tooltip,
-  Button,
-  Text,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
-  Drawer,
-  useDisclosure,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
-  Input,
-  useToast,
-  Spinner,
-  Avatar,
-} from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
-import axios from "axios"; // Import axios
+import axios from "axios";
 import { ChatState } from "../../Context/ChatProvider";
 import ProfileModal from "./ProfileModal";
 import ChatLoading from "../ChatLoading";
@@ -34,41 +13,33 @@ function SideDrawer() {
   const [searchResult, setSearchResult] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const navigate = useNavigate();
-  const toast = useToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    selectedChats,
+    setSelectedChats,
+    user,
+    notification,
+    setNotification,
+    chats,
+    setChats,
+  } = ChatState();
 
   const logoutHandler = () => {
     localStorage.removeItem("userInfo");
     navigate("/");
   };
 
-  const {
-   selectedChats,
-   setSelectedChats,
-   user,
-   notification,
-   setNotification,
-   chats,
-   setChats,
- } = ChatState();
-
   const handleSearch = async () => {
     if (!search) {
-      toast({
-        title: "Please enter something in search",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-        position: "top-left",
-      });
-      return; // Return here to avoid executing the search logic when search is empty
+      alert("Please enter something in search.");
+      return;
     }
 
     try {
       setLoading(true);
       const config = {
-        
         headers: {
           Authorization: `Bearer ${user.token}`,
         },
@@ -77,31 +48,16 @@ function SideDrawer() {
         `https://chatapp-0eao.onrender.com/api/user?search=${search}`,
         config
       );
-     console.log( data)
-      // if (Array.isArray(data)) {
-       setSearchResult(data); // Ensure data is an array before setting
-    //  } else {
-    //    setSearchResult([]);
-    //  }
+      setSearchResult(data);
       setLoading(false);
     } catch (error) {
-      toast({
-        title: "Error occurred!",
-        description: "Failed to load the search results.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-left",
-      });
+      alert("Error fetching search results.");
       setLoading(false);
     }
   };
-  const accessChat = async (userId) => {
-    console.log(userId);
-    console.log(`selected chat is ${selectedChats}`)
-    setSelectedChats(userId)
-    
 
+  const accessChat = async (userId) => {
+    setSelectedChats(userId);
     try {
       setLoading(true);
       const config = {
@@ -115,99 +71,98 @@ function SideDrawer() {
         { userId },
         config
       );
-
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChats(data);
       setLoading(false);
-      onClose();
+      setDrawerOpen(false);
     } catch (error) {
-      toast({
-        title: "Error fetching the chat",
-        description: error.message,
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom-left",
-      });
+      alert("Error fetching the chat.");
     }
-    
   };
 
   return (
     <>
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        bg="white"
-        w="100%"
-        p="5px 10px 5px 10px"
-        borderWidth="5px"
-      >
-        <Tooltip label="Search users to Chat" hasArrow placement="bottom">
-          <Box as="span">
-            <Button variant="ghost" onClick={onOpen}>
-              <FontAwesomeIcon icon={faMagnifyingGlass} />
-              <Text display={{ base: "none", md: "flex" }} px="4">
-                Search
-              </Text>
-            </Button>
-          </Box>
-        </Tooltip>
-        <Text>Chat App</Text>
-        <div>
-          <Menu>
-            <MenuButton p={1}>
-              <BellIcon />
-            </MenuButton>
-          </Menu>
-          <Menu>
-            <MenuButton as={Button} rightIcon={<ChevronDownIcon />} p={1}>
-              <Avatar
-                size="sm"
-                cursor="pointer"
-                name={user.name}
-                src={user.pic}
-              />
-            </MenuButton>
-            <MenuList>
-              <ProfileModal user={user}>
-                <MenuItem>My Profile</MenuItem>
-              </ProfileModal>
-              <MenuDivider />
-              <MenuItem onClick={logoutHandler}>Logout</MenuItem>
-            </MenuList>
-          </Menu>
+      {/* Header */}
+      <div className="flex justify-between items-center bg-white border-b-4 border-blue-600 p-4">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className="flex items-center gap-2 px-3 py-2 text-blue-700 bg-yellow-300 hover:bg-yellow-400 rounded shadow"
+          >
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
+            <span className="hidden md:inline">Search</span>
+          </button>
         </div>
-      </Box>
-      <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader borderBottomWidth="1px">Search Users</DrawerHeader>
-          <DrawerBody>
-            <Box display="flex" pb={2}>
-              <Input
+        <h1 className="text-xl font-bold text-blue-700">Chat App</h1>
+        <div className="flex items-center gap-3">
+          <BellIcon className="text-blue-700 text-xl cursor-pointer" />
+          <div className="relative group">
+            <button className="flex items-center gap-2 p-2 bg-yellow-300 hover:bg-yellow-400 rounded-full">
+              <img
+                src={user.pic}
+                alt={user.name}
+                className="w-8 h-8 rounded-full object-cover"
+              />
+              <ChevronDownIcon className="text-blue-700" />
+            </button>
+            <div className="absolute right-0 mt-2 hidden group-hover:block bg-white border rounded shadow-lg w-48 z-10">
+              <ProfileModal user={user}>
+                <div className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  My Profile
+                </div>
+              </ProfileModal>
+              <hr />
+              <div
+                className="px-4 py-2 hover:bg-red-100 text-red-500 cursor-pointer"
+                onClick={logoutHandler}
+              >
+                Logout
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Drawer */}
+      {drawerOpen && (
+        <div className="fixed inset-0 z-50 flex">
+          <div className="w-80 bg-white shadow-xl p-4 overflow-y-auto">
+            <h2 className="text-lg font-semibold border-b pb-2 mb-4">
+              Search Users
+            </h2>
+            <div className="flex mb-4">
+              <input
+                type="text"
                 placeholder="Search by name or email"
-                mr={2}
+                className="flex-grow p-2 border border-gray-300 rounded-l"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
-              <Button onClick={handleSearch}>Go</Button>
-            </Box>
+              <button
+                onClick={handleSearch}
+                className="px-4 bg-blue-600 text-white font-medium rounded-r hover:bg-blue-700"
+              >
+                Go
+              </button>
+            </div>
             {loading ? (
               <ChatLoading />
             ) : (
-              searchResult?.map((user) => (
+              searchResult.map((u) => (
                 <UserListItem
-                  key={user._id}
-                  user={user}
-                  handleFunction={() => accessChat(user._id)}
+                  key={u._id}
+                  user={u}
+                  handleFunction={() => accessChat(u._id)}
                 />
               ))
             )}
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+          </div>
+          <div
+            className="flex-1 bg-black bg-opacity-50"
+            onClick={() => setDrawerOpen(false)}
+          />
+        </div>
+      )}
     </>
   );
 }
