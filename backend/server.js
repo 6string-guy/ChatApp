@@ -40,7 +40,9 @@ const server = app.listen(PORT, () => {
 const io = new Server(server, {
   pingTimeout: 6000,
   cors: {
-    origin: "https://chat-app-two-tau-91.vercel.app",
+    origin: "*", 
+    methods: ["GET", "POST"], 
+    credentials: true,        
   },
 });
 
