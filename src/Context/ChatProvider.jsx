@@ -14,12 +14,12 @@ const ChatProvider = ({ children }) => {
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
       setUser(userInfo);
       if (!userInfo) {
-        navigate("/"); // Navigate to the login page if no user info
+        navigate("/"); 
       }
     } catch (error) {
       console.error("Failed to retrieve user info from localStorage", error);
-      setUser(null); // Reset user to null in case of error
-      navigate("/"); // Navigate to the login page
+      setUser(null); 
+      navigate("/"); 
     }
   }, [navigate]);
 

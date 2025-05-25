@@ -7,6 +7,7 @@ import messageRoutes from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
 import cors from "cors";
 
+
 // Configure environment variables
 configDotenv();
 

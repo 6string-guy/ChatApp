@@ -1,10 +1,10 @@
 import expressAsyncHandler from "express-async-handler";
-import Chat from "../models/chatModel.js"
-import User from "../models/userModel.js"
+import Chat from "../models/chatModel.js";
+import User from "../models/userModel.js";
+import redisClient from "../config/redisClient.js";
+
 const accessChat = expressAsyncHandler(async (req, res) => {
-  const { userId }  = req.body;
-  //console.log(req)
-  console.log( req)
+  const { userId } = req.body;
   if (!userId) {
     console.log("userId param not sent with request");
     return res.sendStatus(400);
@@ -47,35 +47,43 @@ const accessChat = expressAsyncHandler(async (req, res) => {
     }
   }
 });
+
 const fetchChats = expressAsyncHandler(async (req, res) => {
-    try {
-      const chats = await Chat.find({ users: req.user._id })
-        .populate("users", "-password")
-        .populate("groupAdmin", "-password")
-        .populate("latestMessage");
+  const cacheKey = `chats:${req.user._id}`;
+  const cachedChats = await redisClient.get(cacheKey);
 
-      res.json(chats);
-    } catch (error) {
-      console.error(error);
-      res.status(400);
-      throw new Error(error.message);
-    }
+  if (cachedChats) {
+    return res.json(JSON.parse(cachedChats));
+  }
 
-})
+  try {
+    const chats = await Chat.find({ users: req.user._id })
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password")
+      .populate("latestMessage");
+
+    await redisClient.setEx(cacheKey, 3600, JSON.stringify(chats));
+    res.json(chats);
+  } catch (error) {
+    console.error(error);
+    res.status(400);
+    throw new Error(error.message);
+  }
+});
+
 const createGroupChat = expressAsyncHandler(async (req, res) => {
-    if (!req.body.users || !req.body.users)
-    {
-        return res.status( 400).send( {message:"Pleasde fill all the fields"})
-    }
-    var users = JSON.parse(req.body.users);
-    if (users.length < 2) {
-        return res
-            .status(400)
-        .send( "Fuck you group should have more than two users")
+  if (!req.body.users || !req.body.name) {
+    return res.status(400).send({ message: "Please fill all the fields" });
+  }
 
-    }
-    users.push(req.user);
-     try {
+  var users = JSON.parse(req.body.users);
+  if (users.length < 2) {
+    return res.status(400).send("Group should have more than two users");
+  }
+
+  users.push(req.user);
+
+  try {
     const groupChat = await Chat.create({
       chatName: req.body.name,
       users: users,
@@ -87,24 +95,24 @@ const createGroupChat = expressAsyncHandler(async (req, res) => {
       .populate("users", "-password")
       .populate("groupAdmin", "-password");
 
+    for (const user of users) {
+      await redisClient.del(`chats:${user._id}`);
+    }
+
     res.status(200).json(fullGroupChat);
   } catch (error) {
     res.status(400);
     throw new Error(error.message);
   }
 });
+
 const renameGroup = expressAsyncHandler(async (req, res) => {
-  console.log( req)
   const { chatId, chatName } = req.body;
 
   const updatedChat = await Chat.findByIdAndUpdate(
     chatId,
-    {
-      chatName: chatName,
-    },
-    {
-      new: true,
-    }
+    { chatName },
+    { new: true }
   )
     .populate("users", "-password")
     .populate("groupAdmin", "-password");
@@ -113,13 +121,15 @@ const renameGroup = expressAsyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Chat Not Found");
   } else {
+    for (const user of updatedChat.users) {
+      await redisClient.del(`chats:${user._id}`);
+    }
     res.json(updatedChat);
   }
 });
+
 const removeFromGroup = expressAsyncHandler(async (req, res) => {
   const { chatId, userId } = req.body;
-
-  // check if the requester is admin
 
   const removed = await Chat.findByIdAndUpdate(
     chatId,
@@ -137,13 +147,15 @@ const removeFromGroup = expressAsyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Chat Not Found");
   } else {
+    for (const user of removed.users) {
+      await redisClient.del(`chats:${user._id}`);
+    }
     res.json(removed);
   }
 });
+
 const addToGroup = expressAsyncHandler(async (req, res) => {
   const { chatId, userId } = req.body;
-
-  // check if the requester is admin
 
   const added = await Chat.findByIdAndUpdate(
     chatId,
@@ -161,7 +173,18 @@ const addToGroup = expressAsyncHandler(async (req, res) => {
     res.status(404);
     throw new Error("Chat Not Found");
   } else {
+    for (const user of added.users) {
+      await redisClient.del(`chats:${user._id}`);
+    }
     res.json(added);
   }
 });
-export { accessChat, fetchChats, createGroupChat, renameGroup, removeFromGroup , addToGroup};
+
+export {
+  accessChat,
+  fetchChats,
+  createGroupChat,
+  renameGroup,
+  removeFromGroup,
+  addToGroup,
+};
